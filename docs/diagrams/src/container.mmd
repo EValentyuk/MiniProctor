@@ -1,0 +1,45 @@
+---
+config:
+  flowchart:
+    defaultRenderer: elk
+---
+flowchart LR
+    proctor["👤 Проктор"]
+
+    subgraph mp["MiniProctor"]
+        direction LR
+        app["Streamlit App<br/><i>Streamlit / Plotly</i>"]
+
+        subgraph detectors_grp["Детекторы"]
+            direction TB
+            face_det["Face Detectors<br/><i>MediaPipe</i><br/>head pose, faces"]
+            yolo_det["YOLO Detectors<br/><i>Ultralytics</i><br/>phone, book"]
+        end
+
+        events["Events Pipeline<br/><i>Python</i><br/>маски → интервалы"]
+        evaluator["Evaluator<br/><i>Python</i><br/>метрики vs GT"]
+
+        subgraph storage["Хранилища"]
+            direction TB
+            weights[("Models<br/>*.task, *.pt")]
+            data[("Data<br/>mp4, csv")]
+        end
+    end
+
+    proctor <-->|видео + параметры,<br/>отчёт| app
+    app --> face_det
+    app --> yolo_det
+    face_det --> events
+    yolo_det --> events
+    events --> app
+    face_det -.-> weights
+    yolo_det -.-> weights
+    evaluator --> events
+    evaluator -.-> data
+
+    classDef person fill:#08427b,stroke:#073b6f,color:#fff
+    classDef container fill:#438dd5,stroke:#3c7fc0,color:#fff
+    classDef store fill:#999,stroke:#666,color:#fff
+    class proctor person
+    class app,face_det,yolo_det,events,evaluator container
+    class weights,data store

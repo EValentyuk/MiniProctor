@@ -1,0 +1,11 @@
+flowchart LR
+    A[Roboflow Universe] -->|download_datasets.py| B[data/datasets/]
+    B -->|merge_datasets.py| C[data/dataset_merged/]
+    D[Наши клипы phone_in_hand.mp4, book_in_view.mp4] -->|auto_label.py| E[data/own_labeled/]
+    E -->|add_own_to_dataset.py| C
+    F[yolov8n.pt pretrained] -->|train_yolo.py 20 эпох| G[yolov8n_finetuned.pt Pass 1]
+    G -->|train_yolo.py 15 эпох на C| H[yolov8n_pass2.pt Pass 2]
+    C --> H
+    H --> I[evaluator.py]
+    J[data/labels/ground_truth.csv] --> I
+    I --> K[data/metrics/finetuned_pass2_metrics.csv]

@@ -1,0 +1,21 @@
+sequenceDiagram
+    actor U as Проктор
+    participant App as Streamlit App
+    participant Det as Face Detectors
+    participant YOLO as YOLO Detector
+    participant Ev as Events Pipeline
+    participant FS as Файлы
+
+    U->>App: Выбор клипа + порогов
+    U->>App: Клик «Запустить анализ»
+    App->>Det: process_video(clip, thresholds)
+    Det->>FS: Чтение face_landmarker.task
+    Det-->>App: list[FrameResult] (yaw, pitch, gaze_flag, ...)
+    App->>YOLO: run_yolo_per_frame(clip, weights)
+    YOLO->>FS: Чтение yolov8n_pass2.pt
+    YOLO-->>App: {phone: [bool], book: [bool]}
+    App->>Ev: run_full_analysis(...)
+    Ev->>Ev: mask_to_intervals + merge_close + filter_short
+    Ev-->>App: events[], totals{}
+    App->>App: Plotly Gantt + dataframe
+    App-->>U: Таймлайн + таблица + CSV

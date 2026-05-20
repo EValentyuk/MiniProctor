@@ -1,0 +1,24 @@
+flowchart LR
+    student["👤 Студент<br/>Сдаёт онлайн-экзамен"]
+    proctor["👤 Проктор<br/>Проверяет нарушения"]
+    miniproctor(["MiniProctor<br/>CV-детекторы и UI"])
+
+    subgraph external["Внешние источники"]
+        direction TB
+        roboflow["Roboflow Universe<br/>Датасеты phone/book"]
+        ultralytics["Ultralytics Hub<br/>Веса YOLO, YOLO-World"]
+        mediapipe["MediaPipe<br/>face_landmarker.task"]
+    end
+
+    student -- "Видео с вебки (mp4)" --> miniproctor
+    miniproctor -- "Таймлайн, CSV-отчёт" --> proctor
+    miniproctor -. "REST API" .-> roboflow
+    miniproctor -. "HTTP" .-> ultralytics
+    miniproctor -. "HTTP" .-> mediapipe
+
+    classDef person fill:#08427b,stroke:#073b6f,color:#fff
+    classDef system fill:#1168bd,stroke:#0e5ba6,color:#fff
+    classDef ext fill:#999,stroke:#666,color:#fff
+    class student,proctor person
+    class miniproctor system
+    class roboflow,ultralytics,mediapipe ext
