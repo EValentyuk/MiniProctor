@@ -533,3 +533,67 @@ Mermaid-диаграммы по модели C4:
 - `docs/diagrams/images/context.png`, `container.png`, `inference-flow.png`, `training-flow.png`.
 
 **Первая попытка с `C4Context`/`C4Container` дала плохой рендер** -- стрелки изогнутые, вертикальная компоновка не читается. Переписаны на обычный `flowchart` с subgraph-группировкой и `classDef`-стилями в духе C4 (синий для систем/контейнеров, тёмно-синий для людей, серый для внешних). Inline-Mermaid-блоки в `architecture.md` синхронизированы с .mmd-файлами.
+
+После повторной правки -- container с пересекающимися стрелками заменён на LR-компоновку с ELK-рендерером (`defaultRenderer: elk` в frontmatter Mermaid). Стрелки стали ортогональными, поток читается слева направо.
+
+## 2026-05-20 08:58
+
+### День 7: финал. Заливка на GitHub, демо-сценарий, посты
+
+**Подготовка к публикации**
+
+- `.gitignore` расширен: добавлены `models/`, `.claude/`, `*.task`. Скрытие лишнего из публичной заливки -- .claude/skills/ (не относится к ML), .env, веса.
+- Удалён stray `yolo26n.pt` из корня (случайный артефакт автозагрузки YOLO).
+- Создан `LICENSE` -- MIT для кода, с пояснением про AGPL у YOLO-весов и Apache 2.0 у MediaPipe.
+- Создан `README.en.md` -- англоязычная версия README для международной аудитории, сверху -- ссылка на русский. В русском README -- симметричная ссылка на английский.
+
+**Заливка на GitHub**
+
+- `git init` в `c:/Projects/MiniProctor`, дефолтная ветка переименована в `main`.
+- Первый коммит 38 файлов, 4102 строки. В индексе: исходники, документация, диаграммы и их PNG, LICENSE, README. Не попало: data/, models/, runs/, .venv/, .env, .claude/.
+- `gh repo create MiniProctor --public --source=. --remote=origin --push --description "..."` -- репозиторий создан и запушен в `https://github.com/EValentyuk/MiniProctor`.
+- Темы: `computer-vision`, `mediapipe`, `proctoring`, `python`, `streamlit`, `yolov8` (через `gh repo edit --add-topic`).
+- Второй коммит: `docs/demo-video-script.md` и `docs/social-post-drafts.md`, push поверх первого.
+
+**Демо-видео и пост -- готовлю на стороне пользователя**
+
+- `docs/demo-video-script.md` -- покадровый сценарий записи на 3-4 минуты: вступление, архитектура, демонстрация UI, fine-tune история, связь с СА, финал. Технические советы по микрофону, темпу, монтажу.
+- `docs/social-post-drafts.md` -- развёрнутые посты на русском (TenChat) и английском (LinkedIn), плюс короткие версии для Twitter/X (до 280 символов), плюс заметки по времени публикации, картинкам, хэштегам и CTA.
+
+**Файлы**
+
+- Создано: `LICENSE`, `README.en.md`, `data/.gitkeep`, `models/.gitkeep`, `docs/demo-video-script.md`, `docs/social-post-drafts.md`.
+- Изменено: `.gitignore`, `README.md` (добавлена ссылка на английскую версию).
+- Удалено: `yolo26n.pt` (мусорный артефакт).
+- Создан git-репозиторий: `https://github.com/EValentyuk/MiniProctor` (public, main branch, 6 тем).
+
+### Финальный статус проекта
+
+**Что сделано за 7 дней:**
+
+1. Day 1 -- окружение, smoke-тесты MediaPipe и YOLOv8 на тестовом ролике;
+2. Day 2 -- 3 face-детектора (head pose, multi-face, no-face), сглаживание, тестовый клип gaze_test;
+3. Day 3 -- 7 размеченных клипов, интерактивный разметчик `label_clip.py`, ground_truth.csv с 13 интервалами;
+4. Day 4 -- оценщик precision/recall/F1, тюнинг порогов head pose (исправление осей через scipy), Pass 1 (Roboflow only) -- регрессия, Pass 2 (+89 авторазмеченных через YOLO-World) -- прорыв;
+5. Day 5 -- Streamlit-приложение с таймлайном на Plotly, сглаживание интервалов в UI;
+6. Day 6 -- `docs/metrics.md`, `docs/architecture.md` с C4-диаграммами в Mermaid, обновлённый README;
+7. Day 7 -- LICENSE, англоязычный README, заливка на GitHub, сценарий демо-видео, черновики постов.
+
+**Финальные метрики (F1 покадрово, 7 клипов):**
+
+| **Событие** | **F1 Baseline** | **F1 Pass 2 (финал)** |
+|:---|:---|:---|
+| phone | 0.588 | 0.728 |
+| book | 0.072 | 0.368 |
+| gaze_away | 0.402 | 0.743 |
+| multi_face | 0.997 | 0.997 |
+| no_face | 0.602 | 0.602 |
+
+### Следующие шаги (вне семидневного спринта)
+
+- Записать демо-видео по сценарию `docs/demo-video-script.md`, залить unlisted на YouTube или TenChat.
+- Опубликовать пост в TenChat и LinkedIn по черновикам из `docs/social-post-drafts.md`.
+- Откликнуться на 5-10 ML-вакансий в командах прокторинга и EdTech, в сопроводительном письме упоминать MiniProctor.
+- Опциональные технические улучшения после feedback с собеседований: pass 3 с большим объёмом своих кадров, snapshot UI с готовыми примерами, англоязычная версия portfolio-report.md.
+
+Проект закрыт по семидневному плану. Готов к показу.
